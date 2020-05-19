@@ -1,25 +1,34 @@
 import React from 'react';
+import firebase from 'firebase';
 import db from './db';
 
 export default class JournalEntry extends React.Component {
     onEditClick = (e) => {
+        const uid = firebase.auth().currentUser.uid;
         const { entry } = this.props;
         const { name } = entry.data();
         const updatedEntry = prompt('Edit entry', name);
         
         if (updatedEntry) {
-            db.collection('journalEntries')
+            db
+                .collection('users')
+                .doc(uid)
+                .collection('journalEntries')
                 .doc(entry.id)
                 .update({ name: updatedEntry });
         }
     }
 
     onDeleteClick = (e) => {
+        const uid = firebase.auth().currentUser.uid;
         const { entry } = this.props;
         const shouldDelete = window.confirm('Are you sure?');
 
         if (shouldDelete) {
-            db.collection('journalEntries')
+            db
+                .collection('users')
+                .doc(uid)
+                .collection('journalEntries')
                 .doc(entry.id)
                 .delete();
         }
